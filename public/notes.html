@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Notes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffe6f0; /* light pink background */
+      color: #4a004a; /* deep purple text */
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #d63384; /* dark pink */
+    }
+    #userinfo {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #ff1493;
+    }
+    form {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 10px;
+      border: 1px solid #ff80bf;
+      border-radius: 6px;
+      outline: none;
+      width: 250px;
+    }
+    input:focus {
+      border-color: #d63384;
+      box-shadow: 0 0 5px #ff80bf;
+    }
+    button {
+      background: #ff80bf;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 10px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #d63384;
+    }
+    h3 {
+      color: #d63384;
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 500px;
+      margin: 0 auto;
+      background: #fff0f6;
+      border: 2px solid #ff80bf;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(255, 0, 128, 0.2);
+    }
+    ul li {
+      padding: 10px;
+      border-bottom: 1px solid #ffcce0;
+    }
+    ul li:last-child {
+      border-bottom: none;
+    }
+    #adminlink {
+      text-align: center;
+      margin-top: 20px;
+    }
+    #adminlink a {
+      text-decoration: none;
+      background: #ff80bf;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    #adminlink a:hover {
+      background: #d63384;
+    }
+  </style>
+  <script>
+   
+    if (location.protocol === "file:") {
+      location.href = "http://localhost:3000/notes.html";
+    }
+  </script>
+</head>
+<body>
+  <h2>Notes Page</h2>
+
+  <div id="userinfo"></div>
+
+  <form method="POST" action="/api/notes">
+    <input name="text" placeholder="Write a note" required>
+    <button type="submit">Add Note</button>
+  </form>
+
+  <h3>Your Notes:</h3>
+  <ul id="notes"></ul>
+
+  <div id="adminlink"></div>
+
+  <script>
+    async function loadNotes() {
+      const res = await fetch("/api/notes");
+      const data = await res.json();
+      document.getElementById("userinfo").innerText =
+        "Logged in as: " + data.user.name + " (" + data.user.role + ")";
+      const list = document.getElementById("notes");
+      list.innerHTML = "";
+      data.notes.forEach(n => {
+        const li = document.createElement("li");
+        li.textContent = `[${n.owner}] ${n.text}`;
+        list.appendChild(li);
+      });
+      if (data.user.role === "admin") {
+        document.getElementById("adminlink").innerHTML =
+          '<a href="audit.html">📑 View Audit Logs</a>';
+      }
+    }
+    loadNotes();
+  </script>
+</body>
+</html>

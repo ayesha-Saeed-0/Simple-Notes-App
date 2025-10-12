@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audit Logs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffe6f0; /* light pink background */
+      color: #4a004a; /* deep purple text for contrast */
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #d63384; /* dark pink */
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff0f6;
+      border: 2px solid #ff80bf;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(255, 0, 128, 0.2);
+    }
+    ul li {
+      padding: 10px;
+      border-bottom: 1px solid #ffcce0;
+    }
+    ul li:last-child {
+      border-bottom: none;
+    }
+    a {
+      display: block;
+      width: fit-content;
+      margin: 20px auto;
+      text-decoration: none;
+      background: #ff80bf;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    a:hover {
+      background: #d63384;
+    }
+  </style>
+  <script>
+    
+    if (location.protocol === "file:") {
+      location.href = "http://localhost:3000/audit.html";
+    }
+  </script>
+</head>
+<body>
+  <h2>Audit Logs (Admin only)</h2>
+  <ul id="logs"></ul>
+  <a href="notes.html">⬅ Back to Notes</a>
+  <script>
+    async function loadLogs() {
+      const res = await fetch("/api/audit");
+      if (res.status === 403) {
+        document.body.innerHTML = "<h3 style='color:red;text-align:center'>Access Denied</h3>";
+        return;
+      }
+      const logs = await res.json();
+      const ul = document.getElementById("logs");
+      logs.forEach(l => {
+        const li = document.createElement("li");
+        li.textContent = l;
+        ul.appendChild(li);
+      });
+    }
+    loadLogs();
+  </script>
+</body>
+</html>
